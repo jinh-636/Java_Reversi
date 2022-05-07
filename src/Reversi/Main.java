@@ -13,8 +13,8 @@ public class Main{
 }
 
 class MainScreen extends JFrame implements ActionListener {
-    StartScreen startScn = new StartScreen();
-    GameScreen gameScn = new GameScreen();
+    StartScreen startScn;
+    GameScreen gameScn;
     MainScreen() {
         setTitle("Hello!");
         setSize(720, 720); // 720 x 720
@@ -22,6 +22,7 @@ class MainScreen extends JFrame implements ActionListener {
         setLocationRelativeTo(null); // 가운데에서 화면 출력
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // x버튼을 통해 프로그램 종료. 사용자에게 물어볼 수 있음.
 
+        startScn = new StartScreen();
         startScn.st_btn.addActionListener(this);
         add(startScn);
 
@@ -34,6 +35,7 @@ class MainScreen extends JFrame implements ActionListener {
         if (btn == startScn.st_btn) {
             remove(startScn);
             setTitle("Othello");
+            gameScn = new GameScreen();
             add(gameScn);
             revalidate();
             repaint();
