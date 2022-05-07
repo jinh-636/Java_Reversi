@@ -2,31 +2,47 @@ package Reversi;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class Main{
     public static void main(String[] args) {
-        GameScreen gmscreen = new GameScreen();
-        Point p = gmscreen.getLocation();
-        ChatScreen chscreen = new ChatScreen(p.x+gmscreen.getWidth(), p.y);
+        MainScreen mainScn = new MainScreen();
+        Point p = mainScn.getLocation();
+        SubScreen subScn = new SubScreen(p.x+mainScn.getWidth(), p.y);
     }
 }
 
-class GameScreen extends JFrame {
-    Startscreen startscreen = new Startscreen();
-    GameScreen() {
+class MainScreen extends JFrame implements ActionListener {
+    StartScreen startScn = new StartScreen();
+    GameScreen gameScn = new GameScreen();
+    MainScreen() {
         setTitle("Hello!");
         setSize(720, 720); // 720 x 720
         setResizable(false); // 창 크기 변경 x
         setLocationRelativeTo(null); // 가운데에서 화면 출력
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // x버튼을 통해 프로그램 종료. 사용자에게 물어볼 수 있음.
 
-        add(startscreen);
+        startScn.st_btn.addActionListener(this);
+        add(startScn);
+
         setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton btn = (JButton) e.getSource();
+        if (btn == startScn.st_btn) {
+            remove(startScn);
+            setTitle("Othello");
+            add(gameScn);
+            revalidate();
+            repaint();
+        }
     }
 }
 
-class ChatScreen extends JFrame {
-    ChatScreen(int x, int y) {
+class SubScreen extends JFrame {
+    SubScreen(int x, int y) {
         setTitle("Chat");
         setSize(480, 480); // 480 x 480
         setResizable(false); // 창 크기 변경 x
