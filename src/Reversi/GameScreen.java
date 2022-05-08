@@ -10,16 +10,16 @@ public class GameScreen extends JPanel {
 
     GameScreen() {
         setLayout(null); // 직접 위치를 조작하기 위해
-    }
-
-    public void getHandler(GameHandler gameHdr) {
-        this.gameHdr = gameHdr;
-        addMouseListener(gameHdr); // 이벤트 리스너로 핸들러 추가
 
         timer = new Timer(); // 타이머 초기화
         threadTimer = new Thread(timer);
         threadTimer.start();
         add(timer);
+    }
+
+    public void getHandler(GameHandler gameHdr) {
+        this.gameHdr = gameHdr;
+        addMouseListener(gameHdr); // 이벤트 리스너로 핸들러 추가
     }
 
     @Override

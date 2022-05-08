@@ -8,15 +8,14 @@ public class GameHandler extends MouseAdapter{
     private boolean TurnWhite;
     // 1: 흰색, 0: 돌이 없는 상태, -1: 검은색
     private int[][] board = new int[9][9]; // 8 x 8
+    private int[][] snapshot = new int[9][9];
 
     GameHandler(GameScreen gameScn) {
         this.gameScn = gameScn;
         PlayerWhite = true;
         TurnWhite = true;
 
-        for (int i=1; i<=8; i++) // 보드 초기화
-            for (int j=1; j<=8; j++)
-                board[i][j] = 0;
+        initBoard();
     }
 
     public void changeTurn() {
@@ -32,6 +31,7 @@ public class GameHandler extends MouseAdapter{
         if ((x <= 0 || x >= 9) || (y <= 0 || y >= 9)) // == (x < 70 || x >= 630) || (y < 70 || y >= 630)
             return;
 
+        saveToSnap();
         board[y][x] = PlayerWhite ? 1 : -1;
         gameScn.repaint();
     }
@@ -42,5 +42,25 @@ public class GameHandler extends MouseAdapter{
 
     int getStone(int x, int y) {
         return board[y][x];
+    }
+
+    public void initBoard() {
+        for (int i=1; i<=8; i++) // 보드 초기화
+            for (int j=1; j<=8; j++) {
+                board[i][j] = 0;
+                snapshot[i][j] = 0;
+            }
+    }
+
+    public void saveToSnap() {
+        for (int i=1; i<=8; i++) // 보드 초기화
+            for (int j=1; j<=8; j++)
+                snapshot[i][j] = board[i][j];
+    }
+
+    public void loadFromSnap() {
+        for (int i=1; i<=8; i++) // 보드 초기화
+            for (int j=1; j<=8; j++)
+                board[i][j] = snapshot[i][j];
     }
 }
