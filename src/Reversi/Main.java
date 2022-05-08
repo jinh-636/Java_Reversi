@@ -15,6 +15,7 @@ public class Main{
 class MainScreen extends JFrame implements ActionListener {
     StartScreen startScn;
     GameScreen gameScn;
+    GameHandler gameHdr;
     MainScreen() {
         setTitle("Hello!");
         setSize(720, 720); // 720 x 720
@@ -35,7 +36,10 @@ class MainScreen extends JFrame implements ActionListener {
         if (btn == startScn.st_btn) {
             remove(startScn);
             setTitle("Othello");
-            gameScn = new GameScreen();
+            gameScn = new GameScreen(); // 게임 화면 생성
+            gameHdr = new GameHandler(gameScn); // 화면과 핸들러 연결
+            gameScn.getHandler(gameHdr);
+
             add(gameScn);
             revalidate();
             repaint();
