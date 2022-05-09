@@ -20,6 +20,7 @@ public class GameHandler extends MouseAdapter{
 
     public void changeTurn() {
         TurnWhite = !TurnWhite;
+        PlayerWhite = !PlayerWhite; // 임시
     }
 
     @Override
@@ -33,6 +34,7 @@ public class GameHandler extends MouseAdapter{
 
         saveToSnap();
         board[y][x] = PlayerWhite ? 1 : -1;
+        changeTurn();
         gameScn.repaint();
     }
 
@@ -40,27 +42,36 @@ public class GameHandler extends MouseAdapter{
         return p / 70;
     }
 
-    int getStone(int x, int y) {
+    public int getStone(int x, int y) {
         return board[y][x];
     }
 
     public void initBoard() {
-        for (int i=1; i<=8; i++) // 보드 초기화
+        for (int i=1; i<=8; i++) // 보드와 스냅샷 초기화
             for (int j=1; j<=8; j++) {
                 board[i][j] = 0;
                 snapshot[i][j] = 0;
             }
+
+        board[4][4] = 1; snapshot[4][4] = 1;
+        board[4][5] = -1; snapshot[4][5] = -1;
+        board[5][4] = -1; snapshot[5][4] = -1;
+        board[5][5] = 1; snapshot[5][5] = 1;
     }
 
     public void saveToSnap() {
-        for (int i=1; i<=8; i++) // 보드 초기화
+        for (int i=1; i<=8; i++)
             for (int j=1; j<=8; j++)
                 snapshot[i][j] = board[i][j];
     }
 
     public void loadFromSnap() {
-        for (int i=1; i<=8; i++) // 보드 초기화
+        for (int i=1; i<=8; i++)
             for (int j=1; j<=8; j++)
                 board[i][j] = snapshot[i][j];
+    }
+
+    public void checkColor() {
+
     }
 }

@@ -25,6 +25,7 @@ class MainScreen extends JFrame implements ActionListener {
 
         startScn = new StartScreen();
         startScn.st_btn.addActionListener(this);
+
         add(startScn);
 
         setVisible(true);
