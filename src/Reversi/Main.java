@@ -54,6 +54,7 @@ class SubScreen extends JFrame {
         setSize(480, 480); // 480 x 480
         setResizable(false); // 창 크기 변경 x
         setLocation(x, y); // 게임창 옆에 챗창을 위치 시킴.
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         setVisible(true); // 시작 시에는 보이지 않아야 함. 현재는 확인용으로 true.
     }
