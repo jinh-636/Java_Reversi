@@ -77,8 +77,8 @@ public class GameHandler extends MouseAdapter{
 
         board[4][4] = White; snapshot[4][4] = White;
         board[4][5] = Black; snapshot[4][5] = Black;
-        board[5][4] = Black; snapshot[5][4] = White;
-        board[5][5] = White; snapshot[5][5] = Black;
+        board[5][4] = Black; snapshot[5][4] = Black;
+        board[5][5] = White; snapshot[5][5] = White;
     }
 
     public void saveToSnap() {
@@ -185,6 +185,7 @@ public class GameHandler extends MouseAdapter{
 
         return isPossible;
     }
+
     public void changeColor(int cell_x, int cell_y, int d) {
         // Direction
         // 0-1-2-3 / 4-5-6-7 -> 동-서-남-북 / 왼쪽 위-왼쪽 아래-오른쪽 위-오른쪽 아래
