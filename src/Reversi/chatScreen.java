@@ -14,6 +14,7 @@ public class chatScreen extends JPanel implements ActionListener{
     JButton button_input;//입력버튼
     JScrollPane scrollPane;//스크롤
 
+    GameHandler gameHdr; // 핸들러 연결
 
     //CHAT SCREEN
     chatScreen(){
@@ -55,6 +56,10 @@ public class chatScreen extends JPanel implements ActionListener{
         chat_space.requestFocus();
     }
 
+    public void getHandler(GameHandler gameHdr) {
+        this.gameHdr = gameHdr;
+    }
+
     //Send 눌렀을 때
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -94,7 +99,7 @@ public class chatScreen extends JPanel implements ActionListener{
 
         }
         else if(text.equals("/ff")){
-
+            gameHdr.checkGameOver(true);
         }
         else{
 
@@ -105,8 +110,6 @@ public class chatScreen extends JPanel implements ActionListener{
         //초기화 및 커서요청
         chat_space.setText("");
         chat_space.requestFocus();
-
-
     }
 }
 

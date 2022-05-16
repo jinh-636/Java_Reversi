@@ -68,7 +68,8 @@ public class GameScreen extends JPanel {
 
     // Timer 내부 클래스
     class Timer extends JLabel implements Runnable {
-        private int second = 15;
+        private final int MAX_TIME = 15;
+        private int second = MAX_TIME;
 
         Timer() {
             setFont(new Font("맑은 고딕", Font.BOLD, 15));
@@ -79,15 +80,26 @@ public class GameScreen extends JPanel {
 
         @Override
         public void run() {
-            while (second > 0) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            while (true) {
+                while (second >= 0) {
+                    try {
+                        setText("Time: " + second);
+                        second--;
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        threadTimer.interrupt();
+                    }
                 }
-                second--;
-                setText("Time: " + second);
+                gameHdr.selectRandomCell();
             }
+        }
+
+        public void stopTimer() {
+            threadTimer.interrupt();
+        }
+
+        public void resetTimer() {
+            second = MAX_TIME;
         }
 
         public int getSecond() {
