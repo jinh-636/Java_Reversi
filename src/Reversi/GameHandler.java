@@ -21,7 +21,7 @@ public class GameHandler extends MouseAdapter{
     private int[][] possibleCells = new int[64][2];
     private int pCellCount = 0;
     // 메소드가 공유할 수 있도록 클래스 변수로 변경, checkChangeColor 메소드로만 직접 값이 변경됨
-    boolean[] isPossible = new boolean[8];
+    private boolean[] isPossible = new boolean[8];
 
     GameHandler(GameScreen gameScn) {
         this.gameScn = gameScn;
