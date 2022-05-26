@@ -5,6 +5,7 @@ import java.util.Random;
 
 public class GameHandler extends MouseAdapter{
     GameScreen gameScn;
+    DataHandler dataHdr;
     private boolean PlayerWhite;
     private boolean TurnWhite;
     private boolean savedTurn;
@@ -23,9 +24,11 @@ public class GameHandler extends MouseAdapter{
     // 메소드가 공유할 수 있도록 클래스 변수로 변경, checkChangeColor 메소드로만 직접 값이 변경됨
     private boolean[] isPossible = new boolean[8];
 
-    GameHandler(GameScreen gameScn) {
+    GameHandler(GameScreen gameScn, DataHandler dataHdr, boolean isServer) {
         this.gameScn = gameScn;
-        PlayerWhite = true;
+        this.dataHdr = dataHdr;
+        // 서버인 경우 흰색, 클라이언트인 경우 검은색 배정
+        PlayerWhite = isServer;
         TurnWhite = true;
         savedTurn = true;
         isLoadedBefore = false;
@@ -33,6 +36,7 @@ public class GameHandler extends MouseAdapter{
         initBoard();
     }
 
+    // 돌을 놓는 3가지 함수
     @Override
     public void mousePressed(MouseEvent e) {
         if (TurnWhite != PlayerWhite) // 내 턴이 아닌 입력 무시
@@ -42,18 +46,18 @@ public class GameHandler extends MouseAdapter{
         if ((x <= 0 || x >= 9) || (y <= 0 || y >= 9)) // == (x < 70 || x >= 630) || (y < 70 || y >= 630)
             return;
 
-        checkChangeColor(x, y);
+        checkChangeColor(x, y, false);
         boolean isThereTrue = false;
         for  (int i=0; i<8; i++) {
             isThereTrue = isPossible[i];
             if (isThereTrue) break; // isPossible이 하나라도 true이면 중지
         }
 
-
         // 놓는 곳이 돌을 바꾸지 못하는 경우거나 돌이 이미 있는 경우
         if (!isThereTrue || board[y][x] != Empty)
             return;
 
+        dataHdr.sender.send(Integer.toString(x) + Integer.toString(y), 'g');
         saveToSnap();
         board[y][x] = PlayerWhite ? White : Black;
         StoneNum++;
@@ -69,6 +73,39 @@ public class GameHandler extends MouseAdapter{
 
     public int getStone(int x, int y) {
         return board[y][x];
+    }
+
+    public void receiveCellData(int x, int y) {
+        checkChangeColor(x, y, true);
+
+        saveToSnap();
+        board[y][x] = !PlayerWhite ? White : Black;
+        StoneNum++;
+        for (int i=0; i<8; i++)
+            if (isPossible[i])
+                changeColor(x, y, i);
+        changeTurn();
+    }
+
+    public void selectRandomCell() {
+        if (TurnWhite != PlayerWhite) // 내 턴이 아닌 경우 무시
+        {System.out.println("executed"); return;}
+        Random random = new Random();
+        checkAllCells();
+        int rand_idx = random.nextInt(pCellCount);
+        int x = possibleCells[rand_idx][0], y = possibleCells[rand_idx][1];
+
+        // 뽑힌 좌표에서 가능한 방향 탐색
+        checkChangeColor(x, y, false);
+
+        dataHdr.sender.send(Integer.toString(x)+Integer.toString(y), 'g');
+        saveToSnap();
+        board[y][x] = PlayerWhite ? White : Black;
+        StoneNum++;
+        for (int i=0; i<8; i++)
+            if (isPossible[i])
+                changeColor(x, y, i);
+        changeTurn();
     }
 
     public void initBoard() {
@@ -109,11 +146,9 @@ public class GameHandler extends MouseAdapter{
     public void changeTurn() {
         savedTurn = TurnWhite;
         TurnWhite = !TurnWhite;
-        PlayerWhite = !PlayerWhite; // 임시
         // 놓을 수 있는 곳이 없는 경우 턴이 다시 돌아옴/
         if (!checkAllCells()) {
             TurnWhite = !TurnWhite;
-            PlayerWhite = !PlayerWhite; // 임시
         }
 
         gameScn.timer.resetTimer();
@@ -157,7 +192,7 @@ public class GameHandler extends MouseAdapter{
 
         for (int y=1; y<=8; y++)
             for (int x=1; x<=8; x++) {
-                checkChangeColor(x, y);
+                checkChangeColor(x, y, false);
                 for (int k=0; k<8; k++) {
                     isThereTrue = isPossible[k];
                     if (isThereTrue) break;
@@ -175,30 +210,16 @@ public class GameHandler extends MouseAdapter{
         return isThereCell;
     }
 
-    public void selectRandomCell() {
-        Random random = new Random();
-        checkAllCells();
-        int rand_idx = random.nextInt(pCellCount);
-        int x = possibleCells[rand_idx][0], y = possibleCells[rand_idx][1];
-
-        // 뽑힌 좌표에서 가능한 방향 탐색
-        checkChangeColor(x, y);
-
-        saveToSnap();
-        board[y][x] = PlayerWhite ? White : Black;
-        StoneNum++;
-        for (int i=0; i<8; i++)
-            if (isPossible[i])
-                changeColor(x, y, i);
-        changeTurn();
-    }
-
-    public void checkChangeColor(int cell_x, int cell_y) {
+    public void checkChangeColor(int cell_x, int cell_y, boolean isReceived) {
         // 0-1-2-3 / 4-5-6-7 -> 동-서-남-북 / 왼쪽 위-왼쪽 아래-오른쪽 위-오른쪽 아래
         for (int i=0; i<8; i++)
             isPossible[i] = false;
 
-        int my_color = PlayerWhite ? White : Black;
+        int my_color;
+        if (isReceived)
+            my_color = !PlayerWhite ? White : Black;
+        else
+            my_color = PlayerWhite ? White : Black;
         int cmp_color = -my_color;
 
         if (cell_x != 8 && board[cell_y][cell_x + 1] == cmp_color) { // 동쪽

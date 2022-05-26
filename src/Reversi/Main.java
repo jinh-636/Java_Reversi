@@ -1,5 +1,5 @@
 package Reversi;
-
+/*
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -69,4 +69,4 @@ class SubScreen extends JFrame {
         setVisible(true); // 시작 시에는 보이지 않아야 함. 현재는 확인용으로 true.
         add(chatScn);
     }
-}
+}*/

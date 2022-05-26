@@ -90,7 +90,12 @@ public class GameScreen extends JPanel {
                         threadTimer.interrupt();
                     }
                 }
-                gameHdr.selectRandomCell();
+                try {
+                    gameHdr.selectRandomCell();
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    threadTimer.interrupt();
+                }
             }
         }
 
