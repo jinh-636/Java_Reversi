@@ -7,19 +7,20 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.ServerSocket;
 
-public class Server {
+public class Server extends Thread{
     ServerSocket serverSocket = null;
     Socket socket = null;
+    MainScreen mainScn;
+    SubScreen subScn;
     DataHandler dataHdr;
     public static void main(String[] args) {
         Server server = new Server();
     }
 
     Server() {
-        MainScreen mainScn = new MainScreen();
+        mainScn = new MainScreen();
         Point p = mainScn.getLocation();
-        SubScreen subScn = new SubScreen(p.x+mainScn.getWidth(), p.y);
-        mainScn.getSubScreen(subScn);
+        subScn = new SubScreen(p.x+mainScn.getWidth(), p.y);
     }
 
     public void startConnect() {
@@ -36,7 +37,6 @@ public class Server {
 
     class MainScreen extends JFrame implements ActionListener {
         StartScreen startScn;
-        SubScreen subScn;
         GameScreen gameScn;
         GameHandler gameHdr;
 
@@ -49,14 +49,8 @@ public class Server {
 
             startScn = new StartScreen();
             startScn.st_btn.addActionListener(this);
-
             add(startScn);
-
             setVisible(true);
-        }
-
-        public void getSubScreen(SubScreen subScn) {
-            this.subScn = subScn; // 메인화면과 서브화면 연결
         }
 
         @Override

@@ -89,7 +89,8 @@ public class GameHandler extends MouseAdapter{
 
     public void selectRandomCell() {
         if (TurnWhite != PlayerWhite) // 내 턴이 아닌 경우 무시
-        {System.out.println("executed"); return;}
+            return;
+
         Random random = new Random();
         checkAllCells();
         int rand_idx = random.nextInt(pCellCount);
@@ -121,6 +122,10 @@ public class GameHandler extends MouseAdapter{
         board[5][5] = White; snapshot[5][5] = White;
     }
 
+    public boolean getTurn() {
+        return this.TurnWhite;
+    }
+
     public void saveToSnap() {
         for (int i=1; i<=8; i++)
             for (int j=1; j<=8; j++)
@@ -150,6 +155,7 @@ public class GameHandler extends MouseAdapter{
         if (!checkAllCells()) {
             TurnWhite = !TurnWhite;
         }
+        gameScn.Turn.setText("Turn: " + (TurnWhite ? "White" : "Black"));
 
         gameScn.timer.resetTimer();
         gameScn.repaint();

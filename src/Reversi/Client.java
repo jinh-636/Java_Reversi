@@ -5,11 +5,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class Client {
     Socket socket = null;
+    MainScreen mainScn;
+    SubScreen subScn;
     DataHandler dataHdr;
 
     public static void main(String[] args) {
@@ -17,10 +19,9 @@ public class Client {
     }
 
     Client() {
-        MainScreen mainScn = new MainScreen();
+        mainScn = new MainScreen();
         Point p = mainScn.getLocation();
-        SubScreen subScn = new SubScreen(p.x+mainScn.getWidth(), p.y);
-        mainScn.getSubScreen(subScn);
+        subScn = new SubScreen(p.x+mainScn.getWidth(), p.y);
     }
 
     public void startConnect() {
@@ -29,13 +30,17 @@ public class Client {
             InetAddress address = InetAddress.getByName("127.0.0.1"); // localhost
             socket = new Socket(address, 8888);
             dataHdr = new DataHandler(socket);
-        } catch (IOException e) {
+        }
+        catch (SocketException se) {
+            System.out.println("연결에 실패했습니다.");
+            System.exit(1);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
     class MainScreen extends JFrame implements ActionListener {
         StartScreen startScn;
-        SubScreen subScn;
         GameScreen gameScn;
         GameHandler gameHdr;
 
@@ -52,10 +57,6 @@ public class Client {
             add(startScn);
 
             setVisible(true);
-        }
-
-        public void getSubScreen(SubScreen subScn) {
-            this.subScn = subScn; // 메인화면과 서브화면 연결
         }
 
         @Override

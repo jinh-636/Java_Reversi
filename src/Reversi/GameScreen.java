@@ -6,6 +6,7 @@ import java.awt.*;
 public class GameScreen extends JPanel {
     Timer timer;
     Thread threadTimer;
+    JLabel Turn;
     GameHandler gameHdr;
 
     GameScreen() {
@@ -15,6 +16,12 @@ public class GameScreen extends JPanel {
         threadTimer = new Thread(timer);
         threadTimer.start();
         add(timer);
+
+        Turn = new JLabel("Turn: White");
+        Turn.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+        Turn.setForeground(new Color(0x29141A));
+        Turn.setBounds(15, 640, 120, 30);
+        add(Turn);
     }
 
     public void getHandler(GameHandler gameHdr) {

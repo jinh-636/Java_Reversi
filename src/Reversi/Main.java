@@ -1,5 +1,5 @@
 package Reversi;
-/*
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -45,7 +45,7 @@ class MainScreen extends JFrame implements ActionListener {
             remove(startScn);
             setTitle("Othello");
             gameScn = new GameScreen(); // 게임 화면 생성
-            gameHdr = new GameHandler(gameScn); // 화면과 핸들러 연결
+            gameHdr = new GameHandler(gameScn, null, false); // 화면과 핸들러 연결
             gameScn.getHandler(gameHdr);
             subScn.chatScn.getHandler(gameHdr);
 
@@ -69,4 +69,5 @@ class SubScreen extends JFrame {
         setVisible(true); // 시작 시에는 보이지 않아야 함. 현재는 확인용으로 true.
         add(chatScn);
     }
-}*/
+}
+
