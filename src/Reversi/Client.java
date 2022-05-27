@@ -66,14 +66,14 @@ public class Client {
             JButton btn = (JButton) e.getSource();
             if (btn == startScn.st_btn) {
                 startConnect();
-
+                subScn.setVisible(true);
                 remove(startScn);
                 setTitle("Othello - Client");
                 gameScn = new GameScreen(false); // 게임 화면 생성
                 gameHdr = new GameHandler(gameScn, overScn, dataHdr, false); // 화면과 핸들러 연결
                 gameScn.getHandler(gameHdr);
-                subScn.chatScn.getHandler(gameHdr);
-                dataHdr.getHandler(gameHdr);
+                subScn.chatScn.getHandler(dataHdr,gameHdr);
+                dataHdr.getHandler(gameHdr,subScn.chatScn);
 
                 add(gameScn);
                 revalidate();
@@ -85,14 +85,14 @@ public class Client {
     class SubScreen extends JFrame {
         chatScreen chatScn;
         SubScreen(int x, int y) {
-            setTitle("Chat");
+            setTitle("Chat-Client");
             setSize(480, 480); // 480 x 480
             setResizable(false); // 창 크기 변경 x
             setLocation(x, y); // 게임창 옆에 챗창을 위치 시킴.
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             chatScn = new chatScreen();
 
-            setVisible(true); // 시작 시에는 보이지 않아야 함. 현재는 확인용으로 true.
+            setVisible(false); // 시작 시에는 보이지 않아야 함. 현재는 확인용으로 true.
             add(chatScn);
         }
     }

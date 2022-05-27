@@ -14,7 +14,8 @@ public class chatScreen extends JPanel implements ActionListener{
     JButton button_input;//입력버튼
     JScrollPane scrollPane;//스크롤
 
-    GameHandler gameHdr; // 핸들러 연결
+    GameHandler gameHdr;
+    DataHandler dataHdr;
 
     //CHAT SCREEN
     chatScreen(){
@@ -28,7 +29,7 @@ public class chatScreen extends JPanel implements ActionListener{
 
         chat_log=new JTextArea();
         chat_log.setEditable(false);//수정x
-        //chat_log.setBounds(0,20,467,390);
+
         chat_log.setBackground(Color.LIGHT_GRAY);//백그라운드 color 지정
         chat_log.setFont(font1);
 
@@ -52,12 +53,13 @@ public class chatScreen extends JPanel implements ActionListener{
         add(scrollPane);
 
         button_input.addActionListener(this);
-
+        chat_space.addActionListener(this);
         chat_space.requestFocus();
     }
 
-    public void getHandler(GameHandler gameHdr) {
-        this.gameHdr = gameHdr;
+    public void getHandler(DataHandler dataHdr,GameHandler gameHdr) {
+        this.dataHdr = dataHdr;
+        this.gameHdr=gameHdr;
     }
 
     //Send 눌렀을 때
@@ -78,8 +80,8 @@ public class chatScreen extends JPanel implements ActionListener{
                 " 단, 따먹은 돌은 없어지는 게 아니라 자기편의 돌로 변한 채로 그 자리에 있게 된다. 즉, 상대편의 돌을 뒤집어 자기편의 돌로 만드는 것이다.\n";
 
         String text = chat_space.getText();
-
-        chat_log.append(text + "\n");//챗기록창에 chat남김
+        dataHdr.sender.send(text,'c');
+        chat_log.append("나: "+text + "\n");//챗기록창에 chat남김
 
             //입력된 메세지가 /help일 경우
         if(text.equals("/help")) {
@@ -93,13 +95,17 @@ public class chatScreen extends JPanel implements ActionListener{
             chat_log.append("----\n");
         }
         else if(text.equals("/restart")){
+            chat_log.append("상대방에게 게임재시작을 요청하겠습니다.\n");
+            //재시작요청
 
         }
         else if(text.equals("/reset")){
+            chat_log.append("상대방에게 수무르기를 요청하겠습니다.\n");
+            //수 무르기요청
 
         }
         else if(text.equals("/ff")){
-            gameHdr.checkGameOver(true, false);
+            gameHdr.checkGameOver(true,false);
         }
         else{
 
@@ -110,6 +116,17 @@ public class chatScreen extends JPanel implements ActionListener{
         //초기화 및 커서요청
         chat_space.setText("");
         chat_space.requestFocus();
+    }
+
+    //message 듣는 함수
+    public void receiveMessage(String text){
+        chat_log.append("상대방: "+text+"\n");
+        if(text.equals("/restart")){
+
+        }
+        else if(text.equals("/reset")){
+
+        }
     }
 }
 
