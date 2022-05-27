@@ -94,28 +94,28 @@ public class GameScreen extends JPanel {
                         second--;
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        threadTimer.interrupt();
+                        return;
                     }
                 }
                 try {
                     gameHdr.selectRandomCell();
-                    Thread.sleep(50);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
-                    threadTimer.interrupt();
+                    return;
                 }
             }
-        }
-
-        public void stopTimer() {
-            threadTimer.interrupt();
         }
 
         public void resetTimer() {
             second = MAX_TIME;
         }
 
-        public int getSecond() {
-            return this.second;
+        public void stopTimer() {
+            threadTimer.interrupt();
+        }
+
+        public void setNoTimer() {
+            setText("Time: -");
         }
     }
 }

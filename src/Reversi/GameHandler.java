@@ -32,10 +32,6 @@ public class GameHandler extends MouseAdapter{
         this.dataHdr = dataHdr;
         // 서버인 경우 흰색, 클라이언트인 경우 검은색 배정
         PlayerWhite = isServer;
-        TurnWhite = true;
-        savedTurn = true;
-        isLoadedBefore = false;
-        isChangedBefore = false;
 
         initBoard();
     }
@@ -50,7 +46,7 @@ public class GameHandler extends MouseAdapter{
         if ((x <= 0 || x >= 9) || (y <= 0 || y >= 9)) // == (x < 70 || x >= 630) || (y < 70 || y >= 630)
             return;
 
-        checkChangeColor(x, y, false);
+        checkChangeColor(x, y);
         boolean isThereTrue = false;
         for  (int i=0; i<8; i++) {
             isThereTrue = isPossible[i];
@@ -80,7 +76,7 @@ public class GameHandler extends MouseAdapter{
     }
 
     public void receiveCellData(int x, int y) {
-        checkChangeColor(x, y, true);
+        checkChangeColor(x, y);
 
         saveToSnap();
         board[y][x] = !PlayerWhite ? White : Black;
@@ -104,7 +100,7 @@ public class GameHandler extends MouseAdapter{
         int x = possibleCells[rand_idx][0], y = possibleCells[rand_idx][1];
 
         // 뽑힌 좌표에서 가능한 방향 탐색
-        checkChangeColor(x, y, false);
+        checkChangeColor(x, y);
 
         dataHdr.sender.send(Integer.toString(x)+Integer.toString(y), 'g');
         saveToSnap();
@@ -123,10 +119,25 @@ public class GameHandler extends MouseAdapter{
                 snapshot[i][j] = Empty;
             }
 
+        // 상태 변수 초기화
+        TurnWhite = true;
+        savedTurn = true;
+        isLoadedBefore = false;
+        isChangedBefore = false;
+        // 보드 초기 설정
         board[4][4] = White; snapshot[4][4] = White;
         board[4][5] = Black; snapshot[4][5] = Black;
         board[5][4] = Black; snapshot[5][4] = Black;
         board[5][5] = White; snapshot[5][5] = White;
+        // 타이머 초기화
+        gameScn.timer.resetTimer();
+        // 화면 초기화
+        if (PlayerWhite)
+            gameScn.Turn.setText(TurnWhite ? "My Turn!" : "");
+        else
+            gameScn.Turn.setText(TurnWhite ? "" : "My Turn!");
+        overScn.setVisible(false);
+        gameScn.repaint();
     }
 
     public void saveToSnap() {
@@ -147,6 +158,12 @@ public class GameHandler extends MouseAdapter{
 
         TurnWhite = savedTurn;
         isLoadedBefore = true;
+        // 화면 초기화
+        if (PlayerWhite)
+            gameScn.Turn.setText(TurnWhite ? "My Turn!" : "");
+        else
+            gameScn.Turn.setText(TurnWhite ? "" : "My Turn!");
+        gameScn.timer.resetTimer();
         gameScn.repaint();
         return true;
     }
@@ -196,7 +213,7 @@ public class GameHandler extends MouseAdapter{
             overScn.setVisible(true);
             gameScn.timer.resetTimer();
             gameScn.timer.stopTimer();
-            dataHdr.sender.closeConnection();
+            gameScn.timer.setNoTimer();
         }
 
         // /ff 커맨드가 입력된 경우
@@ -209,7 +226,7 @@ public class GameHandler extends MouseAdapter{
             overScn.setVisible(true);
             gameScn.timer.resetTimer();
             gameScn.timer.stopTimer();
-            dataHdr.sender.closeConnection();
+            gameScn.timer.setNoTimer();
         }
     }
 
@@ -223,7 +240,7 @@ public class GameHandler extends MouseAdapter{
                 if (board[y][x] != Empty)
                     continue;
 
-                checkChangeColor(x, y, false);
+                checkChangeColor(x, y);
                 for (int k=0; k<8; k++) {
                     isThereTrue = isPossible[k];
                     if (isThereTrue) break;
@@ -241,7 +258,7 @@ public class GameHandler extends MouseAdapter{
         return isThereCell;
     }
 
-    public void checkChangeColor(int cell_x, int cell_y, boolean isReceived) {
+    public void checkChangeColor(int cell_x, int cell_y) {
         // 0-1-2-3 / 4-5-6-7 -> 동-서-남-북 / 왼쪽 위-왼쪽 아래-오른쪽 위-오른쪽 아래
         for (int i=0; i<8; i++)
             isPossible[i] = false;

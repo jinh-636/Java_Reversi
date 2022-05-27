@@ -59,7 +59,7 @@ public class DataHandler {
 
         Receiver(){
             try{
-                bw=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                bw = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             }catch(IOException e){
                 System.out.println("통신이 원할하지 않습니다");
             }
@@ -83,10 +83,10 @@ public class DataHandler {
                         chatScn.receiveMessage(data);
                     }
                     else if (flag.equals("trig")) {
-
+                        chatScn.receiveTrigger(data);
                     }
                     else if (flag.equals("bool")) {
-
+                        chatScn.receiveBool(data);
                     }
                 } catch (IOException e) {
                     System.out.println("송신에 실패했습니다.");
@@ -94,6 +94,4 @@ public class DataHandler {
             }
         }
     }
-
-
 }

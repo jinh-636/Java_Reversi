@@ -8,7 +8,7 @@ public class OverScreen extends JFrame {
 
     OverScreen() {
         setTitle("Game Over!");
-        setSize(250, 90); // 720 x 720
+        setSize(250, 90);
         setResizable(false); // 창 크기 변경 x
         setLocationRelativeTo(null); // 가운데에서 화면 출력
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // x버튼을 통해 프로그램 종료. 사용자에게 물어볼 수 있음.
