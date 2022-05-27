@@ -13,7 +13,7 @@ public class DataHandler {
     DataHandler(Socket socket) {
         this.socket = socket;
         sender = new Sender();
-        receiverThread = new Receiver(sender);
+        receiverThread = new Receiver();
         receiverThread.start();
     }
 
@@ -31,29 +31,23 @@ public class DataHandler {
             }
         }
 
-        public boolean send(String data, char flag) {
+        public void send(String data, char flag) {
             if (flag == 'g') {
                 pw.println("game" + data);
                 pw.flush();
-                return true;
             }
             else if (flag == 'c') {
                 pw.println("chat" + data);
                 pw.flush();
-                return true;
             }
             else if (flag == 't') {
                 pw.println("trig" + data);
                 pw.flush();
-                return true;
             }
             else if (flag == 'b') {
                 pw.println("bool" + data);
                 pw.flush();
-                return true;
             }
-
-            return false;
         }
 
         public void closeConnection() {
@@ -65,7 +59,7 @@ public class DataHandler {
     class Receiver extends Thread {
         BufferedReader bw = null;
 
-        Receiver(Sender sender) {
+        Receiver() {
             try {
                 bw = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             } catch (IOException e) {
