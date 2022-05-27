@@ -230,7 +230,7 @@ public class chatScreen extends JPanel implements ActionListener{
                 }
             }
         }
-        else if (text.substring(0, 1).equals("N")){
+        else if (text.substring(0, 1).equals("n")){
             chat_log.append("----\n");
             chat_log.append("상대방이 " + TriggerMessage + " 거절했습니다.\n");
             chat_log.append("----\n");
