@@ -99,7 +99,7 @@ public class chatScreen extends JPanel implements ActionListener{
 
         }
         else if(text.equals("/ff")){
-            gameHdr.checkGameOver(true);
+            gameHdr.checkGameOver(true, false);
         }
         else{
 

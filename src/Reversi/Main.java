@@ -44,8 +44,8 @@ class MainScreen extends JFrame implements ActionListener {
         if (btn == startScn.st_btn) {
             remove(startScn);
             setTitle("Othello");
-            gameScn = new GameScreen(); // 게임 화면 생성
-            gameHdr = new GameHandler(gameScn, null, false); // 화면과 핸들러 연결
+            gameScn = new GameScreen(true); // 게임 화면 생성
+            gameHdr = new GameHandler(gameScn, null,null, false); // 화면과 핸들러 연결
             gameScn.getHandler(gameHdr);
             subScn.chatScn.getHandler(gameHdr);
 

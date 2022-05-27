@@ -13,7 +13,7 @@ public class DataHandler {
     DataHandler(Socket socket) {
         this.socket = socket;
         sender = new Sender();
-        receiverThread = new Receiver();
+        receiverThread = new Receiver(sender);
         receiverThread.start();
     }
 
@@ -58,13 +58,14 @@ public class DataHandler {
 
         public void closeConnection() {
             pw.println("goodbye");
+            pw.flush();
         }
     }
 
     class Receiver extends Thread {
         BufferedReader bw = null;
 
-        Receiver() {
+        Receiver(Sender sender) {
             try {
                 bw = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             } catch (IOException e) {
@@ -78,8 +79,7 @@ public class DataHandler {
                 try {
                     String data = bw.readLine();
                     if (data.equals("goodbye")) {
-                        // 양쪽이 모두 종료될 수 있도록
-                        sender.closeConnection();
+                        System.out.println("통신이 종료되었습니다.");
                         break;
                     }
 

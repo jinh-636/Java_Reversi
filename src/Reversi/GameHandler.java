@@ -5,11 +5,13 @@ import java.util.Random;
 
 public class GameHandler extends MouseAdapter{
     GameScreen gameScn;
+    OverScreen overScn;
     DataHandler dataHdr;
     private boolean PlayerWhite;
     private boolean TurnWhite;
     private boolean savedTurn;
     private boolean isLoadedBefore;
+    private boolean isChangedBefore;
     private int StoneNum = 4;
     // 1: 흰색, 0: 돌이 없는 상태, -1: 검은색
     private final int White = 1;
@@ -24,14 +26,16 @@ public class GameHandler extends MouseAdapter{
     // 메소드가 공유할 수 있도록 클래스 변수로 변경, checkChangeColor 메소드로만 직접 값이 변경됨
     private boolean[] isPossible = new boolean[8];
 
-    GameHandler(GameScreen gameScn, DataHandler dataHdr, boolean isServer) {
+    GameHandler(GameScreen gameScn, OverScreen overScn, DataHandler dataHdr, boolean isServer) {
         this.gameScn = gameScn;
+        this.overScn = overScn;
         this.dataHdr = dataHdr;
         // 서버인 경우 흰색, 클라이언트인 경우 검은색 배정
         PlayerWhite = isServer;
         TurnWhite = true;
         savedTurn = true;
         isLoadedBefore = false;
+        isChangedBefore = false;
 
         initBoard();
     }
@@ -91,8 +95,11 @@ public class GameHandler extends MouseAdapter{
         if (TurnWhite != PlayerWhite) // 내 턴이 아닌 경우 무시
             return;
 
+        if (!checkAllCells()) {
+            checkGameOver(false, true);
+            return;
+        }
         Random random = new Random();
-        checkAllCells();
         int rand_idx = random.nextInt(pCellCount);
         int x = possibleCells[rand_idx][0], y = possibleCells[rand_idx][1];
 
@@ -122,10 +129,6 @@ public class GameHandler extends MouseAdapter{
         board[5][5] = White; snapshot[5][5] = White;
     }
 
-    public boolean getTurn() {
-        return this.TurnWhite;
-    }
-
     public void saveToSnap() {
         for (int i=1; i<=8; i++)
             for (int j=1; j<=8; j++)
@@ -151,43 +154,62 @@ public class GameHandler extends MouseAdapter{
     public void changeTurn() {
         savedTurn = TurnWhite;
         TurnWhite = !TurnWhite;
-        // 놓을 수 있는 곳이 없는 경우 턴이 다시 돌아옴/
         if (!checkAllCells()) {
-            TurnWhite = !TurnWhite;
+            // 둘 다 놓을 수가 없는 경우
+            if (isChangedBefore)
+                checkGameOver(false, true);
+            // 놓을 수 있는 곳이 없는 경우 턴이 다시 돌아옴
+            else {
+                TurnWhite = !TurnWhite;
+                isChangedBefore = true;
+            }
         }
-        gameScn.Turn.setText("Turn: " + (TurnWhite ? "White" : "Black"));
 
+        if (PlayerWhite)
+            gameScn.Turn.setText(TurnWhite ? "My Turn!" : "");
+        else
+            gameScn.Turn.setText(TurnWhite ? "" : "My Turn!");
+
+        isChangedBefore = false;
         gameScn.timer.resetTimer();
         gameScn.repaint();
-        checkGameOver(false);
+        checkGameOver(false, false);
     }
 
-    public void checkGameOver(boolean isSurrender) {
+    public void checkGameOver(boolean isSurrender, boolean isNotPossible) {
         // 판이 다 채워진 경우
-        if (!isSurrender && StoneNum == 64) {
-            int WhiteNum = 62, BlackNum;
+        if ((!isSurrender && StoneNum == 64) || isNotPossible) {
+            int WhiteNum = 0, BlackNum = 0;
             for (int i=1; i<=8; i++)
-                for (int j=1; j<=8; j++)
-                    // 검은색인 경우 -1, 흰색인 경우 변화 없음
-                    WhiteNum += (board[i][j] == Black) ? -1 : 0;
-            BlackNum = 64 - WhiteNum;
+                for (int j=1; j<=8; j++) {
+                    WhiteNum += ((board[i][j] == White) ? 1 : 0);
+                    BlackNum += ((board[i][j] == Black) ? 1 : 0);
+                }
 
-            if (WhiteNum >= BlackNum)
-                System.out.println("White Win!");
+            if (WhiteNum > BlackNum)
+                overScn.textLabel.setText("White Win!");
+            else if (WhiteNum == BlackNum)
+                overScn.textLabel.setText("Draw!");
             else
-                System.out.println("Black Win!");
+                overScn.textLabel.setText("Black Win!");
 
+            overScn.setVisible(true);
+            gameScn.timer.resetTimer();
             gameScn.timer.stopTimer();
+            dataHdr.sender.closeConnection();
         }
 
         // /ff 커맨드가 입력된 경우
         else if (isSurrender) {
             if (!TurnWhite)
-                System.out.println("White Win!");
+                overScn.textLabel.setText("White Win!");
             else
-                System.out.println("Black Win!");
+                overScn.textLabel.setText("Black Win!");
 
+            overScn.setVisible(true);
+            gameScn.timer.resetTimer();
             gameScn.timer.stopTimer();
+            dataHdr.sender.closeConnection();
         }
     }
 
@@ -198,6 +220,9 @@ public class GameHandler extends MouseAdapter{
 
         for (int y=1; y<=8; y++)
             for (int x=1; x<=8; x++) {
+                if (board[y][x] != Empty)
+                    continue;
+
                 checkChangeColor(x, y, false);
                 for (int k=0; k<8; k++) {
                     isThereTrue = isPossible[k];
@@ -221,11 +246,7 @@ public class GameHandler extends MouseAdapter{
         for (int i=0; i<8; i++)
             isPossible[i] = false;
 
-        int my_color;
-        if (isReceived)
-            my_color = !PlayerWhite ? White : Black;
-        else
-            my_color = PlayerWhite ? White : Black;
+        int my_color = TurnWhite ? White : Black;
         int cmp_color = -my_color;
 
         if (cell_x != 8 && board[cell_y][cell_x + 1] == cmp_color) { // 동쪽

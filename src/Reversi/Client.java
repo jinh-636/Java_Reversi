@@ -12,6 +12,7 @@ public class Client {
     Socket socket = null;
     MainScreen mainScn;
     SubScreen subScn;
+    OverScreen overScn;
     DataHandler dataHdr;
 
     public static void main(String[] args) {
@@ -22,6 +23,7 @@ public class Client {
         mainScn = new MainScreen();
         Point p = mainScn.getLocation();
         subScn = new SubScreen(p.x+mainScn.getWidth(), p.y);
+        overScn = new OverScreen();
     }
 
     public void startConnect() {
@@ -67,8 +69,8 @@ public class Client {
 
                 remove(startScn);
                 setTitle("Othello - Client");
-                gameScn = new GameScreen(); // 게임 화면 생성
-                gameHdr = new GameHandler(gameScn, dataHdr, false); // 화면과 핸들러 연결
+                gameScn = new GameScreen(false); // 게임 화면 생성
+                gameHdr = new GameHandler(gameScn, overScn, dataHdr, false); // 화면과 핸들러 연결
                 gameScn.getHandler(gameHdr);
                 subScn.chatScn.getHandler(gameHdr);
                 dataHdr.getHandler(gameHdr);

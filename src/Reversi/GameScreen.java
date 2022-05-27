@@ -9,7 +9,7 @@ public class GameScreen extends JPanel {
     JLabel Turn;
     GameHandler gameHdr;
 
-    GameScreen() {
+    GameScreen(boolean isServer) {
         setLayout(null); // 직접 위치를 조작하기 위해
 
         timer = new Timer(); // 타이머 초기화
@@ -17,7 +17,7 @@ public class GameScreen extends JPanel {
         threadTimer.start();
         add(timer);
 
-        Turn = new JLabel("Turn: White");
+        Turn = new JLabel(isServer ? "My Turn!" : "");
         Turn.setFont(new Font("맑은 고딕", Font.BOLD, 15));
         Turn.setForeground(new Color(0x29141A));
         Turn.setBounds(15, 640, 120, 30);
@@ -99,7 +99,7 @@ public class GameScreen extends JPanel {
                 }
                 try {
                     gameHdr.selectRandomCell();
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     threadTimer.interrupt();
                 }

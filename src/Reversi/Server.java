@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.ServerSocket;
 
-public class Server extends Thread{
+public class Server {
     ServerSocket serverSocket = null;
     Socket socket = null;
     MainScreen mainScn;
     SubScreen subScn;
+    OverScreen overScn;
     DataHandler dataHdr;
     public static void main(String[] args) {
         Server server = new Server();
@@ -21,6 +22,7 @@ public class Server extends Thread{
         mainScn = new MainScreen();
         Point p = mainScn.getLocation();
         subScn = new SubScreen(p.x+mainScn.getWidth(), p.y);
+        overScn = new OverScreen();
     }
 
     public void startConnect() {
@@ -61,8 +63,8 @@ public class Server extends Thread{
 
                 remove(startScn);
                 setTitle("Othello - Server");
-                gameScn = new GameScreen(); // 게임 화면 생성
-                gameHdr = new GameHandler(gameScn, dataHdr, true); // 화면과 핸들러 연결
+                gameScn = new GameScreen(true); // 게임 화면 생성
+                gameHdr = new GameHandler(gameScn, overScn, dataHdr, true); // 화면과 핸들러 연결
                 gameScn.getHandler(gameHdr);
                 subScn.chatScn.getHandler(gameHdr);
                 dataHdr.getHandler(gameHdr);
