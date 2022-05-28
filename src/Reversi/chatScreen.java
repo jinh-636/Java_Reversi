@@ -17,11 +17,13 @@ public class chatScreen extends JPanel implements ActionListener{
     GameHandler gameHdr;
     DataHandler dataHdr;
     boolean isTrigger;
+    boolean isServer;
     String TriggerMessage;
 
     //CHAT SCREEN
-    chatScreen(){
+    chatScreen(boolean isServer){
         isTrigger = false;
+        this.isServer = isServer;
         setLayout(null);
         Font font=new Font("궁서 보통",Font.BOLD,15);
         Font font1=new Font("HyhwpEQ 보통",Font.PLAIN,15);
@@ -149,11 +151,18 @@ public class chatScreen extends JPanel implements ActionListener{
             TriggerMessage = "수무르기를";
         }
         else if(text.equals("/ff")){
-            chat_log.append("----\n");
-            chat_log.append("상대방에게 항복했습니다.\n");
-            chat_log.append("----\n");
-            dataHdr.sender.send("ff", 't');
-            gameHdr.checkGameOver(true,false);
+            if (isServer == gameHdr.isMyTurn()) {
+                chat_log.append("----\n");
+                chat_log.append("상대방에게 항복했습니다.\n");
+                chat_log.append("----\n");
+                dataHdr.sender.send("ff", 't');
+                gameHdr.checkGameOver(true, false);
+            }
+            else {
+                chat_log.append("----\n");
+                chat_log.append("내 턴이 아닙니다.\n");
+                chat_log.append("----\n");
+            }
         }
         else if(text.equals("/exit")){
             chat_log.append("----\n");

@@ -112,6 +112,10 @@ public class GameHandler extends MouseAdapter{
         changeTurn();
     }
 
+    public boolean isMyTurn() {
+        return TurnWhite;
+    }
+
     public void initBoard() {
         for (int i=1; i<=8; i++) // 보드와 스냅샷 초기화
             for (int j=1; j<=8; j++) {
