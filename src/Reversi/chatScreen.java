@@ -72,7 +72,7 @@ public class chatScreen extends JPanel implements ActionListener{
     }
 
     public void sendMessage() {
-        String help_command="Command: /help, /rule, /restart, /reset, /ff\n"
+        String help_command="Command: /help, /rule, /restart, /reset, /ff, /exit\n"
                 +"/help: command에 관한 설명\n"
                 +"/rule: 오델로게임 룰 설명\n"
                 +"/restart: 게임재시작요청-> 상대방에게 게임재시작의사를 물어봅니다\n"
